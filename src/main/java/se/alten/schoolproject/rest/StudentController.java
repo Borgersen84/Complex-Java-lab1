@@ -14,13 +14,14 @@ import java.util.List;
 @Stateless
 @NoArgsConstructor
 @Path("/student")
+@Produces({"application/JSON"})
 public class StudentController {
 
     @Inject
     private SchoolAccessLocal sal;
 
     @GET
-    @Produces({"application/JSON"})
+    //@Produces({"application/JSON"})
     public Response showStudents() {
         try {
             List students = sal.listAllStudents();
@@ -33,10 +34,7 @@ public class StudentController {
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces({"application/JSON"})
-    /**
-     * JavaDoc
-     */
+    //@Produces({"application/JSON"})
     public Response addStudent(String studentModel) {
         try {
 
