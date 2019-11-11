@@ -10,6 +10,8 @@ public interface SchoolAccessLocal {
 
     List listAllStudents();
 
+    StudentModel findStudentByName(String forename, String lastName);
+
     StudentModel addStudent(String studentModel);
 
     void removeStudent(String student);

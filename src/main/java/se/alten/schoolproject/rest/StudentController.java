@@ -33,8 +33,10 @@ public class StudentController {
     }
     
     @GET
+    @Path("/find")
     public Response findStudentByName( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname) {
-    	return null;
+    	StudentModel student = sal.findStudentByName(forename, lastname);
+    	return Response.ok(student).build();
     }
 
     @POST
