@@ -24,10 +24,10 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel findStudentByName(String forename, String lastName) {
+    public StudentModel findStudentByName(String forename, String lastname) {
         List<Student> list = studentTransactionAccess.listAllStudents();
         for (int i=0; i<list.size(); i++) {
-            if (list.get(i).getForename().equals(forename) && list.get(i).getLastname().equals(lastName)){
+            if (list.get(i).getForename().equals(forename) && list.get(i).getLastname().equals(lastname)){
                 return studentModel.toModel(list.get(i));
             }
         } return null;

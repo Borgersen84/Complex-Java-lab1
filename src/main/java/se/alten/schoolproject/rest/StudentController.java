@@ -2,10 +2,7 @@ package se.alten.schoolproject.rest;
 
 import lombok.NoArgsConstructor;
 import se.alten.schoolproject.dao.SchoolAccessLocal;
-import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.model.StudentModel;
-
-import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -35,8 +32,18 @@ public class StudentController {
     @GET
     @Path("/find")
     public Response findStudentByName( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname) {
-    	StudentModel student = sal.findStudentByName(forename, lastname);
-    	return Response.ok(student).build();
+        try {
+            StudentModel student = sal.findStudentByName(forename, lastname);
+            if (student != null) {
+                return Response.ok(student).build();
+            }
+
+            return Response.status(Response.Status.NOT_FOUND).entity("{\"Person not found\"}").build();
+            
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
     }
 
     @POST
