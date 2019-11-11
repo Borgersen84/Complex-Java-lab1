@@ -2,8 +2,10 @@ package se.alten.schoolproject.rest;
 
 import lombok.NoArgsConstructor;
 import se.alten.schoolproject.dao.SchoolAccessLocal;
+import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.model.StudentModel;
 
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -21,7 +23,6 @@ public class StudentController {
     private SchoolAccessLocal sal;
 
     @GET
-    //@Produces({"application/JSON"})
     public Response showStudents() {
         try {
             List students = sal.listAllStudents();
@@ -30,11 +31,15 @@ public class StudentController {
             return Response.status(Response.Status.CONFLICT).build();
         }
     }
+    
+    @GET
+    public Response findStudentByName( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname) {
+    	return null;
+    }
 
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
-    //@Produces({"application/JSON"})
     public Response addStudent(String studentModel) {
         try {
 
@@ -70,7 +75,12 @@ public class StudentController {
     }
 
     @PATCH
-    public void updatePartialAStudent(String studentModel) {
+    public Response updatePartialAStudent(String studentModel) {
+    	try {
         sal.updateStudentPartial(studentModel);
+        return Response.ok().build();
+    	} catch (Exception e) {
+    		return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please, Exception\"}").build();
+    	}
     }
 }

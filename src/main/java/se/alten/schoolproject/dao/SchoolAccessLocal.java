@@ -8,7 +8,7 @@ import java.util.List;
 @Local
 public interface SchoolAccessLocal {
 
-    List listAllStudents() throws Exception;
+    List listAllStudents();
 
     StudentModel addStudent(String studentModel);
 
