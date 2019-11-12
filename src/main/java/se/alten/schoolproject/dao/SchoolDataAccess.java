@@ -1,6 +1,8 @@
 package se.alten.schoolproject.dao;
 
 import se.alten.schoolproject.entity.Student;
+import se.alten.schoolproject.exception.DuplicateEmailException;
+import se.alten.schoolproject.exception.EmptyFieldException;
 import se.alten.schoolproject.model.StudentModel;
 import se.alten.schoolproject.transaction.StudentTransactionAccess;
 
@@ -34,16 +36,15 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel addStudent(String newStudent) {
+    public StudentModel addStudent(String newStudent) throws EmptyFieldException, DuplicateEmailException {
         Student studentToAdd = student.toEntity(newStudent);
         boolean checkForEmptyVariables = Stream.of(studentToAdd.getForename(), studentToAdd.getLastname(), studentToAdd.getEmail()).anyMatch(String::isBlank);
-
-        if (checkForEmptyVariables) {
-            studentToAdd.setForename("empty");
-            return studentModel.toModel(studentToAdd);
-        } else {
+        if (!checkForEmptyVariables) {
+            //studentToAdd.setForename("empty");
             studentTransactionAccess.addStudent(studentToAdd);
             return studentModel.toModel(studentToAdd);
+        } else {
+            throw new EmptyFieldException("No Fields Can Be Empty!");
         }
     }
 

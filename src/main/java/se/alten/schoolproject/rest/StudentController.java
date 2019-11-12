@@ -2,6 +2,8 @@ package se.alten.schoolproject.rest;
 
 import lombok.NoArgsConstructor;
 import se.alten.schoolproject.dao.SchoolAccessLocal;
+import se.alten.schoolproject.exception.DuplicateEmailException;
+import se.alten.schoolproject.exception.EmptyFieldException;
 import se.alten.schoolproject.model.StudentModel;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -39,7 +41,7 @@ public class StudentController {
             }
 
             return Response.status(Response.Status.NOT_FOUND).entity("{\"Person not found\"}").build();
-            
+
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -53,15 +55,12 @@ public class StudentController {
         try {
 
             StudentModel answer = sal.addStudent(studentModel);
+            return Response.ok(answer).build();
 
-            switch ( answer.getForename()) {
-                case "empty":
-                    return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please\"}").build();
-                case "duplicate":
-                    return Response.status(Response.Status.EXPECTATION_FAILED).entity("{\"Email already registered!\"}").build();
-                default:
-                    return Response.ok(answer).build();
-            }
+        } catch (DuplicateEmailException e) {
+            return Response.status((Response.Status.CONFLICT)).entity(e.getMessage()).build();
+        } catch (EmptyFieldException e) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
         } catch ( Exception e ) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

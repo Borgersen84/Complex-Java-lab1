@@ -1,6 +1,7 @@
 package se.alten.schoolproject.transaction;
 
 import se.alten.schoolproject.entity.Student;
+import se.alten.schoolproject.exception.DuplicateEmailException;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
@@ -24,14 +25,13 @@ public class StudentTransaction implements StudentTransactionAccess{
     }
 
     @Override
-    public Student addStudent(Student studentToAdd) {
+    public Student addStudent(Student studentToAdd) throws DuplicateEmailException {
         try {
             entityManager.persist(studentToAdd);
             entityManager.flush();
             return studentToAdd;
         } catch ( PersistenceException pe ) {
-            studentToAdd.setForename("duplicate");
-            return studentToAdd;
+            throw new DuplicateEmailException("Email Already Registered!");
         }
     }
 
