@@ -1,8 +1,10 @@
 package se.alten.schoolproject.dao;
 
+import javassist.NotFoundException;
 import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.exception.DuplicateEmailException;
 import se.alten.schoolproject.exception.EmptyFieldException;
+import se.alten.schoolproject.exception.StudentNotFoundException;
 import se.alten.schoolproject.model.StudentModel;
 import se.alten.schoolproject.transaction.StudentTransactionAccess;
 
@@ -26,13 +28,17 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel findStudentByName(String forename, String lastname) {
-        List<Student> list = studentTransactionAccess.listAllStudents();
-        for (int i=0; i<list.size(); i++) {
-            if (list.get(i).getForename().equals(forename) && list.get(i).getLastname().equals(lastname)){
-                return studentModel.toModel(list.get(i));
+    public StudentModel findStudentByName(String forename, String lastname) throws EmptyFieldException, StudentNotFoundException {
+        if(forename != null || !forename.isBlank() || lastname != null || !lastname.isBlank()) {
+            try {
+                return studentModel.toModel(studentTransactionAccess.findStudentByName(forename, lastname));
+            } catch (Exception e) {
+                throw new StudentNotFoundException("{\"Student not found!\"}");
             }
-        } return null;
+        } else {
+            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
+        }
+
     }
 
     @Override
@@ -40,7 +46,6 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
         Student studentToAdd = student.toEntity(newStudent);
         boolean checkForEmptyVariables = Stream.of(studentToAdd.getForename(), studentToAdd.getLastname(), studentToAdd.getEmail()).anyMatch(String::isBlank);
         if (!checkForEmptyVariables) {
-            //studentToAdd.setForename("empty");
             studentTransactionAccess.addStudent(studentToAdd);
             return studentModel.toModel(studentToAdd);
         } else {
@@ -49,8 +54,13 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public void removeStudent(String studentEmail) {
-        studentTransactionAccess.removeStudent(studentEmail);
+    public void removeStudent(String studentEmail) throws NotFoundException {
+        if (!studentEmail.isBlank()) {
+            studentTransactionAccess.removeStudent(studentEmail);
+        } else {
+            throw new NotFoundException("This User Does Not Exist!");
+        }
+
     }
 
     @Override

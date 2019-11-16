@@ -25,5 +25,3 @@ Write `jboss-cli -c --file=school.cli`
 It should say outcome success. Write `jboss-cli -c --command=:reload` to restart the server.
 
 
-
- 

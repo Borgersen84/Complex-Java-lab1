@@ -1,7 +1,9 @@
 package se.alten.schoolproject.transaction;
 
+import javassist.NotFoundException;
 import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.exception.DuplicateEmailException;
+import se.alten.schoolproject.exception.EmptyFieldException;
 
 import javax.ejb.Local;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 @Local
 public interface StudentTransactionAccess {
     List listAllStudents();
+    Student findStudentByName(String forename, String lastname);
     Student addStudent(Student studentToAdd) throws DuplicateEmailException;
     void removeStudent(String student);
     void updateStudent(String forename, String lastname, String email);
