@@ -54,7 +54,6 @@ public class StudentTransaction implements StudentTransactionAccess{
         entityManager.flush();
 
         return studentFound;
-
     }
 
     @Override
@@ -67,8 +66,8 @@ public class StudentTransaction implements StudentTransactionAccess{
                 "SELECT * FROM Student WHERE email = :email", Student.class).setParameter("email", email);
         Student student = (Student) getStudent.getSingleResult();
         entityManager.flush();
-        return student;
 
+        return student;
     }
 
     @Override

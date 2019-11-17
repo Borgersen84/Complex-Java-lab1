@@ -84,7 +84,9 @@ public class StudentController {
             StudentModel student = sal.removeStudent(email);
             return Response.ok().entity("{\"Student " + student.getForename() + " " + student.getLastname() +
                     "[" + student.getEmail() + "]" +  " removed\"}").build();
-        } catch (NotFoundException e) {
+        } catch (EmptyFieldException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        } catch (StudentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch ( Exception e ) {
             return Response.status(Response.Status.BAD_REQUEST).build();

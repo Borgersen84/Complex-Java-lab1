@@ -53,11 +53,15 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel removeStudent(String studentEmail) throws Exception {
+    public StudentModel removeStudent(String studentEmail) throws StudentNotFoundException, EmptyFieldException {
         if (!studentEmail.isBlank()) {
-           return studentModel.toModel(studentTransactionAccess.removeStudent(studentEmail));
+            try {
+                return studentModel.toModel(studentTransactionAccess.removeStudent(studentEmail));
+            } catch (Exception e) {
+                throw new StudentNotFoundException("{\"This User Does Not Exist!\"}");
+            }
         } else {
-            throw new NotFoundException("{\"This User Does Not Exist!\"}");
+            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
         }
 
     }
