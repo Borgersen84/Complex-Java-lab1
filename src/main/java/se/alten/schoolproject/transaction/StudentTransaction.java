@@ -46,13 +46,14 @@ public class StudentTransaction implements StudentTransactionAccess{
     }
 
     @Override
-    public void removeStudent(String student) {
-        Query query = entityManager.createQuery("DELETE FROM Student s WHERE s.email = :email");
-        entityManager.createNativeQuery("DELETE FROM student WHERE email = :email", Student.class);
+    public Student removeStudent(String email) {
+        Student studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
+                .setParameter("email", email).getSingleResult();
+        Query query = entityManager.createNativeQuery("DELETE FROM student WHERE email = :email", Student.class);
+        query.setParameter("email", email).executeUpdate();
+        entityManager.flush();
 
-        query.setParameter("email", student)
-             .executeUpdate();
-
+        return studentFound;
 
     }
 
@@ -71,13 +72,15 @@ public class StudentTransaction implements StudentTransactionAccess{
     }
 
     @Override
-    public void updateStudentPartial(Student student) {
-        Student studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
-                .setParameter("email", student.getEmail()).getSingleResult();
-
+    public Student updateStudentPartial(Student student) {
         Query query = entityManager.createQuery("UPDATE Student SET forename = :studentForename WHERE email = :email");
         query.setParameter("studentForename", student.getForename())
-                .setParameter("email", studentFound.getEmail())
+                .setParameter("email", student.getEmail())
                 .executeUpdate();
+        Student studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
+                .setParameter("email", student.getEmail()).getSingleResult();
+        entityManager.flush();
+
+        return studentFound;
     }
 }

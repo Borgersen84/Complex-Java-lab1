@@ -53,9 +53,9 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public void removeStudent(String studentEmail) throws Exception {
+    public StudentModel removeStudent(String studentEmail) throws Exception {
         if (!studentEmail.isBlank()) {
-            studentTransactionAccess.removeStudent(studentEmail);
+           return studentModel.toModel(studentTransactionAccess.removeStudent(studentEmail));
         } else {
             throw new NotFoundException("{\"This User Does Not Exist!\"}");
         }
@@ -68,8 +68,8 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public void updateStudentPartial(String studentModel) {
+    public StudentModel updateStudentPartial(String studentModel) {
         Student studentToUpdate = student.toEntity(studentModel);
-        studentTransactionAccess.updateStudentPartial(studentToUpdate);
+        return this.studentModel.toModel(studentTransactionAccess.updateStudentPartial(studentToUpdate));
     }
 }

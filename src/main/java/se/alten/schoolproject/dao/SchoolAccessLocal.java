@@ -16,9 +16,9 @@ public interface SchoolAccessLocal {
 
     StudentModel addStudent(String studentModel) throws Exception;
 
-    void removeStudent(String student) throws Exception;
+    StudentModel removeStudent(String student) throws Exception;
 
     StudentModel updateStudent(String forename, String lastname, String email);
 
-    void updateStudentPartial(String studentModel);
+    StudentModel updateStudentPartial(String studentModel);
 }

@@ -81,8 +81,9 @@ public class StudentController {
     @Path("{email}")
     public Response deleteUser( @PathParam("email") String email) {
         try {
-            sal.removeStudent(email);
-            return Response.ok().entity("{\"User removed\"}").build();
+            StudentModel student = sal.removeStudent(email);
+            return Response.ok().entity("{\"Student " + student.getForename() + " " + student.getLastname() +
+                    "[" + student.getEmail() + "]" +  " removed\"}").build();
         } catch (NotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch ( Exception e ) {
@@ -101,8 +102,8 @@ public class StudentController {
     @Produces({"application/JSON"})
     public Response updatePartialAStudent(String studentModel) {
     	try {
-        sal.updateStudentPartial(studentModel);
-        return Response.ok().build();
+        StudentModel student = sal.updateStudentPartial(studentModel);
+        return Response.ok(student).build();
     	} catch (Exception e) {
     		return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please, Exception\"}").build();
     	}

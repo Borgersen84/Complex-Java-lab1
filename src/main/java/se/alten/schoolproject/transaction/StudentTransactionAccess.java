@@ -10,7 +10,7 @@ public interface StudentTransactionAccess {
     List listAllStudents();
     Student findStudentByName(String forename, String lastname);
     Student addStudent(Student studentToAdd) throws Exception;
-    void removeStudent(String student);
+    Student removeStudent(String student);
     Student updateStudent(String forename, String lastname, String email);
-    void updateStudentPartial(Student studentToUpdate);
+    Student updateStudentPartial(Student studentToUpdate);
 }
