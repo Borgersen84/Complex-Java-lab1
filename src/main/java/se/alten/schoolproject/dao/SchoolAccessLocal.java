@@ -1,7 +1,5 @@
 package se.alten.schoolproject.dao;
 
-import javassist.NotFoundException;
-import se.alten.schoolproject.exception.DuplicateEmailException;
 import se.alten.schoolproject.exception.EmptyFieldException;
 import se.alten.schoolproject.exception.StudentNotFoundException;
 import se.alten.schoolproject.model.StudentModel;
@@ -16,11 +14,11 @@ public interface SchoolAccessLocal {
 
     StudentModel findStudentByName(String forename, String lastName) throws StudentNotFoundException, EmptyFieldException;
 
-    StudentModel addStudent(String studentModel) throws EmptyFieldException, DuplicateEmailException;
+    StudentModel addStudent(String studentModel) throws Exception;
 
-    void removeStudent(String student) throws NotFoundException;
+    void removeStudent(String student) throws Exception;
 
-    void updateStudent(String forename, String lastname, String email);
+    StudentModel updateStudent(String forename, String lastname, String email);
 
     void updateStudentPartial(String studentModel);
 }

@@ -47,7 +47,8 @@ public class StudentController {
         } catch (EmptyFieldException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong!\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"Your query is not valid! Try again with correct parameters\"}").build();
         }
 
           //  }
@@ -91,8 +92,9 @@ public class StudentController {
 
     @PUT
     @Produces({"application/JSON"})
-    public void updateStudent( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname, @QueryParam("email") String email) {
-        sal.updateStudent(forename, lastname, email);
+    public Response updateStudent( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname, @QueryParam("email") String email) {
+        StudentModel student = sal.updateStudent(forename, lastname, email);
+        return Response.ok(student).build();
     }
 
     @PATCH

@@ -2,7 +2,6 @@ package se.alten.schoolproject.transaction;
 
 import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.exception.DuplicateEmailException;
-import se.alten.schoolproject.exception.EmptyFieldException;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
@@ -42,29 +41,33 @@ public class StudentTransaction implements StudentTransactionAccess{
             entityManager.flush();
             return studentToAdd;
         } catch ( PersistenceException pe ) {
-            throw new DuplicateEmailException("Email Already Registered!");
+            throw new DuplicateEmailException("{\"Email already registered!\"}");
         }
     }
 
     @Override
     public void removeStudent(String student) {
-        //JPQL Query
         Query query = entityManager.createQuery("DELETE FROM Student s WHERE s.email = :email");
-        //Native Query
-        //Query query = entityManager.createNativeQuery("DELETE FROM student WHERE email = :email", Student.class);
+        entityManager.createNativeQuery("DELETE FROM student WHERE email = :email", Student.class);
 
         query.setParameter("email", student)
              .executeUpdate();
+
+
     }
 
     @Override
-    public void updateStudent(String forename, String lastname, String email) {
-        Query updateQuery = entityManager.createNativeQuery(
+    public Student updateStudent(String forename, String lastname, String email) {
+        Query updateStudent = entityManager.createNativeQuery(
                 "UPDATE student SET forename = :forename, lastname = :lastname WHERE email = :email", Student.class);
-        updateQuery.setParameter("forename", forename)
-                   .setParameter("lastname", lastname)
-                   .setParameter("email", email)
-                   .executeUpdate();
+        updateStudent.setParameter("forename", forename).setParameter("lastname", lastname)
+                .setParameter("email", email).executeUpdate();
+        Query getStudent = entityManager.createNativeQuery(
+                "SELECT * FROM Student WHERE email = :email", Student.class).setParameter("email", email);
+        Student student = (Student) getStudent.getSingleResult();
+        entityManager.flush();
+        return student;
+
     }
 
     @Override
@@ -72,9 +75,8 @@ public class StudentTransaction implements StudentTransactionAccess{
         Student studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
                 .setParameter("email", student.getEmail()).getSingleResult();
 
-        Query query = entityManager.createQuery("UPDATE Student SET forename = :studentForename, lastname = :lastname WHERE email = :email");
+        Query query = entityManager.createQuery("UPDATE Student SET forename = :studentForename WHERE email = :email");
         query.setParameter("studentForename", student.getForename())
-                .setParameter("lastname", student.getLastname())
                 .setParameter("email", studentFound.getEmail())
                 .executeUpdate();
     }

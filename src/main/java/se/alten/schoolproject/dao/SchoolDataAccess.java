@@ -2,7 +2,6 @@ package se.alten.schoolproject.dao;
 
 import javassist.NotFoundException;
 import se.alten.schoolproject.entity.Student;
-import se.alten.schoolproject.exception.DuplicateEmailException;
 import se.alten.schoolproject.exception.EmptyFieldException;
 import se.alten.schoolproject.exception.StudentNotFoundException;
 import se.alten.schoolproject.model.StudentModel;
@@ -28,8 +27,8 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel findStudentByName(String forename, String lastname) throws EmptyFieldException, StudentNotFoundException {
-        if(forename != null || !forename.isBlank() || lastname != null || !lastname.isBlank()) {
+    public StudentModel findStudentByName(String forename, String lastname) throws StudentNotFoundException, EmptyFieldException {
+        if( (!forename.isBlank()) || (!lastname.isBlank()) ) {
             try {
                 return studentModel.toModel(studentTransactionAccess.findStudentByName(forename, lastname));
             } catch (Exception e) {
@@ -42,30 +41,30 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     }
 
     @Override
-    public StudentModel addStudent(String newStudent) throws EmptyFieldException, DuplicateEmailException {
+    public StudentModel addStudent(String newStudent) throws Exception {
         Student studentToAdd = student.toEntity(newStudent);
         boolean checkForEmptyVariables = Stream.of(studentToAdd.getForename(), studentToAdd.getLastname(), studentToAdd.getEmail()).anyMatch(String::isBlank);
         if (!checkForEmptyVariables) {
             studentTransactionAccess.addStudent(studentToAdd);
             return studentModel.toModel(studentToAdd);
         } else {
-            throw new EmptyFieldException("No Fields Can Be Empty!");
+            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
         }
     }
 
     @Override
-    public void removeStudent(String studentEmail) throws NotFoundException {
+    public void removeStudent(String studentEmail) throws Exception {
         if (!studentEmail.isBlank()) {
             studentTransactionAccess.removeStudent(studentEmail);
         } else {
-            throw new NotFoundException("This User Does Not Exist!");
+            throw new NotFoundException("{\"This User Does Not Exist!\"}");
         }
 
     }
 
     @Override
-    public void updateStudent(String forename, String lastname, String email) {
-        studentTransactionAccess.updateStudent(forename, lastname, email);
+    public StudentModel updateStudent(String forename, String lastname, String email) {
+        return studentModel.toModel(studentTransactionAccess.updateStudent(forename, lastname, email));
     }
 
     @Override
