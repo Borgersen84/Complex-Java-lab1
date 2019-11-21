@@ -13,6 +13,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 @Stateless
 @Default
 public class StudentTransaction implements StudentTransactionAccess{

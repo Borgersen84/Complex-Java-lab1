@@ -22,6 +22,7 @@ public class StudentModel implements Serializable {
         studentModel.setForename(student.getForename());
         studentModel.setLastname(student.getLastname());
         studentModel.setEmail(student.getEmail());
+
         return studentModel;
 
     }

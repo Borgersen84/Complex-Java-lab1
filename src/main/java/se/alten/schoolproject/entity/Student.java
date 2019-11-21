@@ -1,7 +1,6 @@
 package se.alten.schoolproject.entity;
 
 import lombok.*;
-import se.alten.schoolproject.model.StudentModel;
 
 import javax.json.Json;
 import javax.json.JsonObject;

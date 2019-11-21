@@ -1,6 +1,5 @@
 package se.alten.schoolproject.dao;
 
-import javassist.NotFoundException;
 import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.exception.EmptyFieldException;
 import se.alten.schoolproject.exception.StudentNotFoundException;
