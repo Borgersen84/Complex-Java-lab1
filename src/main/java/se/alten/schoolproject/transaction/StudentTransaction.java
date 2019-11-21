@@ -2,6 +2,8 @@ package se.alten.schoolproject.transaction;
 
 import se.alten.schoolproject.entity.Student;
 import se.alten.schoolproject.exception.DuplicateEmailException;
+import se.alten.schoolproject.exception.EmptyFieldException;
+import se.alten.schoolproject.exception.StudentNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
@@ -57,14 +59,23 @@ public class StudentTransaction implements StudentTransactionAccess{
     }
 
     @Override
-    public Student updateStudent(String forename, String lastname, String email) {
+    public Student updateStudent(String forename, String lastname, String email) throws StudentNotFoundException, EmptyFieldException {
         Query updateStudent = entityManager.createNativeQuery(
                 "UPDATE student SET forename = :forename, lastname = :lastname WHERE email = :email", Student.class);
         updateStudent.setParameter("forename", forename).setParameter("lastname", lastname)
                 .setParameter("email", email).executeUpdate();
         Query getStudent = entityManager.createNativeQuery(
                 "SELECT * FROM Student WHERE email = :email", Student.class).setParameter("email", email);
-        Student student = (Student) getStudent.getSingleResult();
+        Student student = null;
+        try {
+            student = (Student) getStudent.getSingleResult();
+        } catch (Exception e) {}
+        if (student == null) {
+            throw new StudentNotFoundException("{\"This user does not exist!\"}");
+        }
+        else if (student.getForename().isBlank() || student.getLastname().isBlank()) {
+            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
+        }
         entityManager.flush();
 
         return student;

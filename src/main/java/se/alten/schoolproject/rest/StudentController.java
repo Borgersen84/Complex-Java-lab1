@@ -36,9 +36,6 @@ public class StudentController {
     @Path("/find")
     @Produces({"application/JSON"})
     public Response findStudentByName( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname) {
-        //@TODO Make sure fields are valid. Better exception handling structure
-        //try {
-        //StudentModel student = null;
         try {
            StudentModel student = sal.findStudentByName(forename, lastname);
             return Response.ok(student).build();
@@ -50,12 +47,6 @@ public class StudentController {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"Your query is not valid! Try again with correct parameters\"}").build();
         }
-
-          //  }
-
-        //catch (Exception e) {
-          //  return Response.status(Response.Status.NOT_FOUND).entity("\"Cause:\":\"Not found\"").build();
-        //}
     }
 
     @POST
@@ -96,8 +87,16 @@ public class StudentController {
     @PUT
     @Produces({"application/JSON"})
     public Response updateStudent( @QueryParam("forename") String forename, @QueryParam("lastname") String lastname, @QueryParam("email") String email) {
-        StudentModel student = sal.updateStudent(forename, lastname, email);
-        return Response.ok(student).build();
+        try {
+            StudentModel student = sal.updateStudent(forename, lastname, email);
+            return Response.ok(student).build();
+        } catch (EmptyFieldException e) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+        } catch (StudentNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong!\"}").build();
+        }
     }
 
     @PATCH
@@ -106,7 +105,9 @@ public class StudentController {
     	try {
         StudentModel student = sal.updateStudentPartial(studentModel);
         return Response.ok(student).build();
-    	} catch (Exception e) {
+    	} catch (StudentNotFoundException e) {
+    	    return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (Exception e) {
     		return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please, Exception\"}").build();
     	}
     }

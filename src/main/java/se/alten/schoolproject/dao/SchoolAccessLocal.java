@@ -18,7 +18,7 @@ public interface SchoolAccessLocal {
 
     StudentModel removeStudent(String student) throws StudentNotFoundException, EmptyFieldException;
 
-    StudentModel updateStudent(String forename, String lastname, String email);
+    StudentModel updateStudent(String forename, String lastname, String email) throws StudentNotFoundException, EmptyFieldException;
 
-    StudentModel updateStudentPartial(String studentModel);
+    StudentModel updateStudentPartial(String studentModel) throws StudentNotFoundException, EmptyFieldException;
 }
