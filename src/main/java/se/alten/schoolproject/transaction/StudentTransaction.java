@@ -22,8 +22,11 @@ public class StudentTransaction implements StudentTransactionAccess{
     private EntityManager entityManager;
 
     @Override
-    public List listAllStudents() {
+    public List listAllStudents() throws StudentNotFoundException {
         Query query = entityManager.createQuery("SELECT s from Student s");
+        if (query.getResultList().size() < 1 ) {
+            throw new StudentNotFoundException("{\"The list is empty!\"}");
+        }
         return query.getResultList();
     }
 

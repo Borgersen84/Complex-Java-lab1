@@ -10,7 +10,7 @@ import java.util.List;
 @Local
 public interface SchoolAccessLocal {
 
-    List listAllStudents();
+    List listAllStudents() throws StudentNotFoundException;
 
     StudentModel findStudentByName(String forename, String lastName) throws StudentNotFoundException, EmptyFieldException;
 

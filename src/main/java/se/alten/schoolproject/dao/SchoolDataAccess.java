@@ -21,7 +21,7 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
     StudentTransactionAccess studentTransactionAccess;
 
     @Override
-    public List listAllStudents(){
+    public List listAllStudents() throws StudentNotFoundException {
         return studentTransactionAccess.listAllStudents();
     }
 

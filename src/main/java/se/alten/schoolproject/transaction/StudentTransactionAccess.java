@@ -9,7 +9,7 @@ import java.util.List;
 
 @Local
 public interface StudentTransactionAccess {
-    List listAllStudents();
+    List listAllStudents() throws StudentNotFoundException;
     Student findStudentByName(String forename, String lastname);
     Student addStudent(Student studentToAdd) throws Exception;
     Student removeStudent(String student);

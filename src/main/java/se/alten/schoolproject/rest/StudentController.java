@@ -27,8 +27,10 @@ public class StudentController {
         try {
             List students = sal.listAllStudents();
             return Response.ok(students).build();
-        } catch ( Exception e ) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch ( StudentNotFoundException e ) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong\"}").build();
         }
     }
     
@@ -44,8 +46,7 @@ public class StudentController {
         } catch (EmptyFieldException e) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"Something went wrong\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong\"}").build();
         }
     }
 
@@ -55,10 +56,8 @@ public class StudentController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addStudent(String studentModel) {
         try {
-
             StudentModel answer = sal.addStudent(studentModel);
             return Response.ok(answer).build();
-
         } catch (DuplicateEmailException e) {
             return Response.status((Response.Status.CONFLICT)).entity(e.getMessage()).build();
         } catch (EmptyFieldException e) {
