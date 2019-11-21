@@ -28,7 +28,7 @@ public class StudentController {
             List students = sal.listAllStudents();
             return Response.ok(students).build();
         } catch ( Exception e ) {
-            return Response.status(Response.Status.CONFLICT).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
     
@@ -42,10 +42,10 @@ public class StudentController {
         } catch (StudentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch (EmptyFieldException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"Your query is not valid! Try again with correct parameters\"}").build();
+                    .entity("{\"Something went wrong\"}").build();
         }
     }
 
@@ -64,7 +64,7 @@ public class StudentController {
         } catch (EmptyFieldException e) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
         } catch ( Exception e ) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong\"}").build();
         }
     }
 
@@ -76,11 +76,11 @@ public class StudentController {
             return Response.ok().entity("{\"Student " + student.getForename() + " " + student.getLastname() +
                     "[" + student.getEmail() + "]" +  " removed\"}").build();
         } catch (EmptyFieldException e) {
-            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
         } catch (StudentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch ( Exception e ) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong\"}").build();
         }
     }
 
@@ -110,7 +110,7 @@ public class StudentController {
         } catch (StudentNotFoundException e) {
     	    return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch (Exception e) {
-    		return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please, Exception\"}").build();
+    		return Response.status(Response.Status.BAD_REQUEST).entity("{\"Something went wrong\"}").build();
     	}
     }
 }
