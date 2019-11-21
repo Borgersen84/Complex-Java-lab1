@@ -61,10 +61,15 @@ public class StudentTransaction implements StudentTransactionAccess{
 
     @Override
     public Student updateStudent(String forename, String lastname, String email) throws StudentNotFoundException, EmptyFieldException {
-        Query updateStudent = entityManager.createNativeQuery(
-                "UPDATE student SET forename = :forename, lastname = :lastname WHERE email = :email", Student.class);
-        updateStudent.setParameter("forename", forename).setParameter("lastname", lastname)
-                .setParameter("email", email).executeUpdate();
+        boolean accepted = !forename.isBlank() && !lastname.isBlank();
+        if (accepted) {
+            Query updateStudent = entityManager.createNativeQuery(
+                    "UPDATE student SET forename = :forename, lastname = :lastname WHERE email = :email", Student.class);
+            updateStudent.setParameter("forename", forename).setParameter("lastname", lastname)
+                    .setParameter("email", email).executeUpdate();
+        } else {
+            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
+        }
         Query getStudent = entityManager.createNativeQuery(
                 "SELECT * FROM Student WHERE email = :email", Student.class).setParameter("email", email);
         Student student = null;
@@ -74,22 +79,29 @@ public class StudentTransaction implements StudentTransactionAccess{
         if (student == null) {
             throw new StudentNotFoundException("{\"This user does not exist!\"}");
         }
-        else if (student.getForename().isBlank() || student.getLastname().isBlank()) {
-            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
-        }
         entityManager.flush();
 
         return student;
     }
 
     @Override
-    public Student updateStudentPartial(Student student) {
-        Query query = entityManager.createQuery("UPDATE Student SET forename = :studentForename WHERE email = :email");
-        query.setParameter("studentForename", student.getForename())
-                .setParameter("email", student.getEmail())
-                .executeUpdate();
-        Student studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
-                .setParameter("email", student.getEmail()).getSingleResult();
+    public Student updateStudentPartial(Student student) throws EmptyFieldException, StudentNotFoundException {
+        boolean accepted = !student.getForename().isBlank();
+        if (accepted) {
+            Query query = entityManager.createQuery("UPDATE Student SET forename = :studentForename WHERE email = :email");
+            query.setParameter("studentForename", student.getForename())
+                    .setParameter("email", student.getEmail()).executeUpdate();
+        } else {
+            throw new EmptyFieldException("{\"Perhaps your updated name should have some letters...?\"}");
+        }
+        Student studentFound = null;
+        try {
+            studentFound = (Student)entityManager.createQuery("SELECT s FROM Student s WHERE s.email = :email")
+                    .setParameter("email", student.getEmail()).getSingleResult();
+        } catch (Exception e) {}
+        if (student == null) {
+            throw new StudentNotFoundException("{\"This user does not exist!\"}");
+        }
         entityManager.flush();
 
         return studentFound;

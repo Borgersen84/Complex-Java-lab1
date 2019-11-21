@@ -27,7 +27,7 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
 
     @Override
     public StudentModel findStudentByName(String forename, String lastname) throws StudentNotFoundException, EmptyFieldException {
-        if( (!forename.isBlank()) || (!lastname.isBlank()) ) {
+        if( !forename.isBlank() && !lastname.isBlank() ) {
             try {
                 return studentModel.toModel(studentTransactionAccess.findStudentByName(forename, lastname));
             } catch (Exception e) {
@@ -72,16 +72,7 @@ public class SchoolDataAccess implements SchoolAccessLocal, SchoolAccessRemote {
 
     @Override
     public StudentModel updateStudentPartial(String studentModel) throws StudentNotFoundException, EmptyFieldException {
-        if (!studentModel.isBlank()) {
-            try {
-                Student studentToUpdate = student.toEntity(studentModel);
-                return this.studentModel.toModel(studentTransactionAccess.updateStudentPartial(studentToUpdate));
-            } catch (Exception e) {
-                throw new StudentNotFoundException("{\"This User Does Not Exist!\"}");
-            }
-        } else {
-            throw new EmptyFieldException("{\"No empty fields allowed!\"}");
-        }
-
+        Student studentToUpdate = student.toEntity(studentModel);
+        return this.studentModel.toModel(studentTransactionAccess.updateStudentPartial(studentToUpdate));
     }
 }

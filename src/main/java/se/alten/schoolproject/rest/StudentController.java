@@ -105,7 +105,9 @@ public class StudentController {
     	try {
         StudentModel student = sal.updateStudentPartial(studentModel);
         return Response.ok(student).build();
-    	} catch (StudentNotFoundException e) {
+    	} catch (EmptyFieldException e) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+        } catch (StudentNotFoundException e) {
     	    return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch (Exception e) {
     		return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"Fill in all details please, Exception\"}").build();

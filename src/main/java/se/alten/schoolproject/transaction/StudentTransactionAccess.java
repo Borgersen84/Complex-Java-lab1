@@ -14,5 +14,5 @@ public interface StudentTransactionAccess {
     Student addStudent(Student studentToAdd) throws Exception;
     Student removeStudent(String student);
     Student updateStudent(String forename, String lastname, String email) throws StudentNotFoundException, EmptyFieldException;
-    Student updateStudentPartial(Student studentToUpdate);
+    Student updateStudentPartial(Student studentToUpdate) throws EmptyFieldException, StudentNotFoundException;
 }
